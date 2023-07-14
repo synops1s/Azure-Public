@@ -23,14 +23,9 @@ $MsixBundleUri = $(Invoke-RestMethod -Uri "https://api.github.com/repos/microsof
 $MsixBundleFileName = $MsixBundleUri.Split("/")[-1]
 $MsixBundleFilePath = (Join-Path -Path $TempPath -ChildPath $MsixBundleFileName)
 
-# $MsixBundleLicenseUri = $(Invoke-RestMethod -Uri "https://api.github.com/repos/microsoft/winget-cli/releases/latest").assets.browser_download_url | Where-Object { $_.EndsWith(".xml") }
-# $MsixBundleLicenseFileName = $MsixBundleLicenseUri.Split("/")[-1]
-# $MsixBundleLicenseFilePath = (Join-Path -Path $TempPath -ChildPath $MsixBundleLicenseFileName)
-
 Invoke-WebRequest -Uri $VCLibsUri -OutFile $VCLibsFilePath
 Invoke-WebRequest -Uri $XamlUri -OutFile $XamlNugetFilePath
 Invoke-WebRequest -Uri $MsixBundleUri -OutFile $MsixBundleFilePath
-Invoke-WebRequest -Uri $MsixBundleLicenseUri -OutFile $MsixBundleLicenseFilePath
 
 Remove-Item -Path $XamlZipFilePath -Force -ErrorAction SilentlyContinue
 Rename-Item -Path $XamlNugetFilePath -NewName $XamlZipFilePath
