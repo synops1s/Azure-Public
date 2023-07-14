@@ -19,10 +19,15 @@ $XamlNugetFilePath = (Join-Path -Path $TempPath -ChildPath "$($XamlFileName).nup
 $XamlZipFilePath = (Join-Path -Path $TempPath -ChildPath "$($XamlFileName).zip")
 $XamlAppxFilePath = (Join-Path -Path $TempPath -ChildPath "$($XamlFileName)\tools\AppX\x64\Release\$($XamlFileName).appx")
 
+$MsixBundleLicenseUri = $(Invoke-RestMethod -Uri "https://api.github.com/repos/microsoft/winget-cli/releases/latest").assets.browser_download_url | Where-Object { $_.EndsWith(".xml") }
+$MsixBundleLicenseFileName = $MsixBundleLicenseUri.Split("/")[-1]
+$MsixBundleLicenseFilePath = (Join-Path -Path $TempPath -ChildPath $MsixBundleLicenseFileName)
+
 $MsixBundleUri = $(Invoke-RestMethod -Uri "https://api.github.com/repos/microsoft/winget-cli/releases/latest").assets.browser_download_url | Where-Object { $_.EndsWith(".msixbundle") }
 $MsixBundleFileName = $MsixBundleUri.Split("/")[-1]
 $MsixBundleFilePath = (Join-Path -Path $TempPath -ChildPath $MsixBundleFileName)
 
+Invoke-WebRequest -Uri $MsixBundleLicenseUri -OutFile $MsixBundleLicenseFilePath
 Invoke-WebRequest -Uri $VCLibsUri -OutFile $VCLibsFilePath
 Invoke-WebRequest -Uri $XamlUri -OutFile $XamlNugetFilePath
 Invoke-WebRequest -Uri $MsixBundleUri -OutFile $MsixBundleFilePath
@@ -33,4 +38,7 @@ Expand-Archive $XamlZipFilePath -Force -DestinationPath (Join-Path -Path $TempPa
 
 Add-AppxPackage -Path $VCLibsFilePath
 Add-AppxPackage -Path $XamlAppxFilePath
+Add-ProvisionedAppxPackage -PackagePath $MsixBundleFilePath -LicensePath $MsixBundleLicenseFilePath -Online
 Add-AppxPackage -Path $MsixBundleFilePath
+
+# winget install Microsoft.SQLServerManagementStudio
