@@ -16,8 +16,6 @@ Invoke-WebRequest -Uri $MsixBundleUri -OutFile $MsixBundleFilePath
 Write-Information "Downloading WinGet License to artifacts directory..."
 Invoke-WebRequest -Uri $MsixBundleLicenseUri -OutFile $MsixBundleLicenseFilePath
 
-Add-AppxPackage -Path $MsixBundleFilePath -LicensePath $MsixBundleLicenseFilePath -AllUsers
-
 Add-ProvisionedAppxPackage -PackagePath $MsixBundleFilePath -LicensePath $MsixBundleLicenseFilePath -Online
 
 Remove-Item -Path $MsixBundleFilePath -ErrorAction SilentlyContinue
